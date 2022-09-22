@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.StaticFiles;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container ...
@@ -19,6 +21,8 @@ builder.Services.AddSwaggerGen();
 // database connection
 builder.Services.AddDataProtection();
 
+// file extention add as a singletone to service provider
+builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
 // finaly build application
 var app = builder.Build();
