@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc; // for Controller or ControllerBase
 namespace CityInfo.Api.Controllers
 {
     [ApiController]
-    [Route("api/Cities")] // way1 is better: default route path
+    [Route("api/cities")] // way1 is better: default route path
     // [Route("api/[controller]")] // way2: fill controller with class name: Cities
     public class Cities : ControllerBase
     {

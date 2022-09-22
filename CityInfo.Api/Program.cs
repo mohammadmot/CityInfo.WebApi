@@ -4,7 +4,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // builder.Services.AddMvc();
 // builder.Services.AddControllersWithViews();
-builder.Services.AddControllers(); // just add [controller] from [MVC]
+builder.Services.AddControllers(options => // just add [controller] from [MVC]
+{
+    // options.OutputFormatters.Add();
+    // options.InputFormatters.Add();
+    options.ReturnHttpNotAcceptable = true;
+}
+).AddXmlDataContractSerializerFormatters(); // add [XML] support in api Headers/Key: Accept, Value: application/xml
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
