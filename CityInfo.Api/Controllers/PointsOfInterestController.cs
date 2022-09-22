@@ -22,7 +22,7 @@ namespace CityInfo.Api.Controllers
             }
         }
 
-        [HttpGet("{pointOfInterestId}")]
+        [HttpGet("{pointOfInterestId}", Name = "GetPointOfInterest")] // name of action inside controller
         public ActionResult<PointOfInterestDto> GetPointOfInterest(int cityId, int pointOfInterestId)
         {
             var city = CitiesDataStore.Instance.Cities.FirstOrDefault(c => c.Id == cityId);
@@ -69,10 +69,43 @@ namespace CityInfo.Api.Controllers
         */
         #endregion
 
-
-        /*public IActionResult Index()
+        [HttpPost]
+        public ActionResult<PointOfInterestDto> CreatePointOfInterest(
+            int cityId,
+            [FromBody] PointOfInterestForCreationDto pointOfInterest // extract from body of request
+            )
         {
-            return View();
-        }*/
+            // json to object => deserialize
+            // object to json => serialize
+
+            var city = CitiesDataStore.Instance.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+            {
+                return NotFound(); // 404 error
+            }
+
+            int nMaxPointOfInterest_Id = CitiesDataStore.Instance.Cities.
+                SelectMany(c => c.pointOfInterestDtos)
+                .Max(p => p.Id);
+
+            // define new record
+            var createPoint = new PointOfInterestDto();
+            createPoint.Id = ++nMaxPointOfInterest_Id;              // !!! problem of concurency request !!!
+            createPoint.Name = pointOfInterest.Name;                // "+New Interest point [Name]";
+            createPoint.Description = pointOfInterest.Description;  // "+New Interest point [Description]";
+
+            // add new record
+            city.pointOfInterestDtos.Add(createPoint);
+
+            // created = 201
+            return CreatedAtAction("GetPointOfInterest",
+                new
+                {
+                    cityId = cityId,
+                    pointOfInterestId = createPoint.Id
+                },
+                createPoint // return new object as a result of api
+                );
+        }
     }
 }
