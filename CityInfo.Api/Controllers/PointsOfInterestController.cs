@@ -69,6 +69,7 @@ namespace CityInfo.Api.Controllers
         */
         #endregion
 
+        #region Post = Create
         [HttpPost]
         public ActionResult<PointOfInterestDto> CreatePointOfInterest(
             int cityId,
@@ -112,5 +113,34 @@ namespace CityInfo.Api.Controllers
                 createPoint // return new object as a result of api
                 );
         }
+        #endregion
+
+        #region Edit = Update = Put
+        [HttpPut("{pointOfInterestId}")]
+        public ActionResult<bool> UpdatePointOfInterest(
+            int cityId, 
+            int pointOfInterestId,
+            PointOfInterestForUpdateDto updatePoint
+            )
+        {
+            var city = CitiesDataStore.Instance.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+            {
+                return NotFound();
+            }
+
+            var point = city.pointOfInterestDtos.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (point == null)
+            {
+                return NotFound();
+            }
+
+            // update => have to fill [all] feilds. even [one] of them need to be update 
+            point.Name = updatePoint.Name;
+            point.Description = updatePoint.Description;
+
+            return NoContent();
+        }
+        #endregion
     }
 }
