@@ -6,15 +6,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // builder.Services.AddMvc();
 // builder.Services.AddControllersWithViews();
-builder.Services.AddControllers(); // just add [controller] from [MVC]
-/*(options => 
+builder.Services.AddControllers //(); // just add [controller] from [MVC]
+(options =>
 {
-    // options.OutputFormatters.Add();
-    // options.InputFormatters.Add();
-    options.ReturnHttpNotAcceptable = true;
+    // - options.OutputFormatters.Add();
+    // - options.InputFormatters.Add();
+    // * options.ReturnHttpNotAcceptable = true;
 }
-).AddXmlDataContractSerializerFormatters(); // add [XML] support in api Headers/Key: Accept, Value: application/xml
-*/
+)
+// * .AddXmlDataContractSerializerFormatters() // add [XML] support in api Headers/Key: Accept, Value: application/xml
+.AddNewtonsoftJson(); // add json serializer and deserializer [replace json.net]
+
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

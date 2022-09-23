@@ -1,4 +1,5 @@
 ﻿using CityInfo.Api.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.Api.Controllers
@@ -141,6 +142,91 @@ namespace CityInfo.Api.Controllers
 
             return NoContent();
         }
+
         #endregion
+
+        #region Edit with patch
+
+        #region Http Patch
+        // Http Patch, for some of feilds need to update
+        // Object Notation (JSON) Patch = Json Patch Document
+        // ref: https://www.rfc-editor.org/rfc/rfc6902
+        // ref: https://jsonpatch.com/
+        //
+        // Dotnetcore Package JsonPatch: Microsoft.AspNetCore.JsonPatch
+        // Dotnetcore Package NewtonsoftJson: Microsoft.AspNetCore.Mvc.NewtonsoftJson
+        //      also add to service collection
+        // Obj1 <===> Obj2
+        // Obj2.name = Obj1.name // update name
+        /* sample of JSON patch:
+        [
+          { "op": "replace", "path": "/baz",   "value": "boo"     },
+          { "op": "add",     "path": "/hello", "value": ["world"] },
+          { "op": "remove",  "path": "/foo"                       }
+        ]
+        */
+        #endregion
+
+        [HttpPatch("{pointOfInterestId}")]
+        public ActionResult PartiallyUpdatePointOfInterest(
+            int cityId,
+            int pointOfInterestId,
+            JsonPatchDocument<PointOfInterestForUpdateDto> patchDocument
+            )
+        {
+            var city = CitiesDataStore.Instance.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+                return NotFound();
+
+            // original object
+            var pointOriginal = city.pointOfInterestDtos.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (pointOriginal == null)
+                return NotFound();
+
+            // copy object from original object to update later
+            var pointToPatch = new PointOfInterestForUpdateDto()
+            {
+                Name = pointOriginal.Name,
+                Description = pointOriginal.Description,
+            };
+
+            /* Sample Message Body:
+            [
+                {
+                "op": "replace",
+                "path": "/Name",
+                "value": "TestPatchUpdate - Name"
+                },
+                {
+                "op": "replace",
+                "path": "/Description",
+                "value": "TestPatchUpdate - Desc"
+                }
+            ]
+            */
+
+            // check patchDocument for apply new feild
+            if (patchDocument != null)
+            {
+                patchDocument.ApplyTo(pointToPatch, ModelState); // check with model state for data validation
+
+                // check data validation with model state
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                // update original record
+                pointOriginal.Name = pointToPatch.Name;
+                pointOriginal.Description = pointToPatch.Description;
+
+                return NoContent();
+            }
+
+            return NoContent();
+        }
+        #endregion
+        
+
+
+
     }
 }
