@@ -78,6 +78,11 @@ namespace CityInfo.Api.Controllers
             // json to object => deserialize
             // object to json => serialize
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var city = CitiesDataStore.Instance.Cities.FirstOrDefault(c => c.Id == cityId);
             if (city == null)
             {
