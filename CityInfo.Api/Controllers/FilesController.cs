@@ -20,7 +20,7 @@ namespace CityInfo.Api.Controllers
             )
         {
             _FileExtension = FileExtension;
-            // _logger = Logger ?? throw new ArgumentNullException(nameof(Logger));
+            _logger = Logger ?? throw new ArgumentNullException(nameof(Logger));
         }
 
         [HttpGet("{fileId}")]
