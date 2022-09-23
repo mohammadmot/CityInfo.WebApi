@@ -36,10 +36,10 @@ builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 // ref: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0
 
 // logger create object
-// **** builder.Services.AddSingleton<ILogger>();
+// *** builder.Services.AddSingleton<ILogger>();
 
 // configuration of logger
-// - builder.Services.AddLogger(configuration);
+// *** builder.Services.AddLogger(configuration);
 
 // change log config in appsettings.json, appsettings.Development.json
 // config log config in code not appsetting
@@ -122,4 +122,11 @@ app.UseEndpoints(endpoints =>
 #endregion
 
 // =========================================
+
+#region log
+app.Logger.LogInformation("### Adding Routes");
+app.MapGet("/", () => "### Hello App in Root !");
+app.Logger.LogInformation("### Starting the app ...");
+#endregion
+
 app.Run();
