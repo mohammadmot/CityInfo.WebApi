@@ -31,6 +31,11 @@ namespace CityInfo.Api.Controllers
                 #region log
                 // just for test throw exception
                 // - throw new Exception("My force exception ... :-)");
+                if (_logger != null)
+                {
+                    _logger.LogInformation("fileId item {fileId}", fileId);
+                    _logger.LogInformation(LogEventID.GetItem, "Getting item {fileId}", fileId);
+                }    
 
                 if (_logger != null)
                     _logger.LogInformation("GetFile controller visited at {DT}", DateTime.Now.ToLongTimeString());
@@ -59,6 +64,7 @@ namespace CityInfo.Api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogWarning(LogEventID.GetItemNotFound, ex, "TestExp({fileId})", fileId);
                 _logger.LogCritical($"Exception getting FilesController.GetFile {fileId}", ex);
                 return StatusCode(500, "A problem happen in file !!!");
             }

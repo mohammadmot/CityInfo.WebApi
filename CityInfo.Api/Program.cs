@@ -49,6 +49,31 @@ builder.Host.ConfigureLogging(logging =>
     logging.AddConsole();
 });
 
+// Filter function
+// A filter function is invoked for all providers and categories that don't have rules assigned to
+// them by configuration or code:
+// The preceding code displays console logs when the category contains Controller or Microsoft
+// and the log level is Information or higher.
+builder.Logging.AddFilter((provider, category, logLevel) =>
+{
+    if (provider.Contains("Console")
+        && category.Contains("Controller")
+        && logLevel >= LogLevel.Information)
+    {
+        return true;
+    }
+    else if (provider.Contains("Console")
+        && category.Contains("Microsoft")
+        && logLevel >= LogLevel.Information)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+});
+
 // https://elmah.io/
 #endregion
 
