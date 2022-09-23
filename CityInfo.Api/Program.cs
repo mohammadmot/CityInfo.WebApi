@@ -29,6 +29,29 @@ builder.Services.AddDataProtection();
 // file extention add as a singletone to service provider
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
+#region logging
+// add .net core logger
+// Inversion of Control IoC
+// Dependency Injection = DI
+// ref: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0
+
+// logger create object
+// **** builder.Services.AddSingleton<ILogger>();
+
+// configuration of logger
+// - builder.Services.AddLogger(configuration);
+
+// change log config in appsettings.json, appsettings.Development.json
+// config log config in code not appsetting
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+});
+
+// https://elmah.io/
+#endregion
+
 // finaly build application
 var app = builder.Build();
 

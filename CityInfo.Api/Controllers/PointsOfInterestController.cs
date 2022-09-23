@@ -9,6 +9,7 @@ namespace CityInfo.Api.Controllers
     [ApiController]
     public class PointsOfInterestController : ControllerBase
     {
+        #region Get
         [HttpGet]
         public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId)
         {
@@ -40,6 +41,7 @@ namespace CityInfo.Api.Controllers
                 return Ok(interests);
             }
         }
+        #endregion
 
         #region Format response data: output-formatter, input-formatter
         // Format response data in ASP.NET Core Web API:
@@ -228,8 +230,30 @@ namespace CityInfo.Api.Controllers
             return NoContent();
         }
         #endregion
-        
 
+        #region Delete
+        [HttpDelete("{pointOfInterestId}")]
+        // [AllowAnonymous]
+        // [ValidateAntiForgeryToken]
+        public ActionResult DeletePointsOfInterest(
+            int cityId,
+            int pointOfInterestId
+            )
+        {
+            var city = CitiesDataStore.Instance.Cities.FirstOrDefault(c => c.Id == cityId);
+            if (city == null)
+                return NotFound();
+
+            // original object
+            var pointOriginal = city.pointOfInterestDtos.FirstOrDefault(p => p.Id == pointOfInterestId);
+            if (pointOriginal == null)
+                return NotFound();
+
+            city.pointOfInterestDtos.Remove(pointOriginal);
+
+            return NoContent();
+        }
+        #endregion
 
 
     }
