@@ -214,6 +214,10 @@ namespace CityInfo.Api.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
+                // check data validation
+                if (!TryValidateModel(pointToPatch))
+                    return BadRequest(ModelState);
+
                 // update original record
                 pointOriginal.Name = pointToPatch.Name;
                 pointOriginal.Description = pointToPatch.Description;
