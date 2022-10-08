@@ -1,4 +1,6 @@
+using CityInfo.Api.Services;
 using Microsoft.AspNetCore.StaticFiles;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,13 +32,26 @@ builder.Services.AddDataProtection();
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
 #region logging
+
+#region Serilog => Serilog.AspNetCore + Serilog.Sinks.File + Serilog.Sinks.Console
+// change default logger to serilog logger:
+Log.Logger = new LoggerConfiguration()
+    // .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("logs/cityinfo.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+#endregion
+
 // add .net core logger
 // Inversion of Control IoC
 // Dependency Injection = DI
 // ref: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0
 
 // logger create object
-// *** builder.Services.AddSingleton<ILogger>();
+// - builder.Services.AddSingleton<ILogger,>();
 
 // configuration of logger
 // *** builder.Services.AddLogger(configuration);
@@ -74,7 +89,25 @@ builder.Logging.AddFilter((provider, category, logLevel) =>
     }
 });
 
-// https://elmah.io/
+// ref: https://learn.microsoft.com/en-us/dotnet/core/extensions/logging-providers
+/*
+Here are some third-party logging frameworks that work with various .NET workloads:
+    elmah.io(GitHub repo)
+    Gelf(GitHub repo)
+    JSNLog(GitHub repo)
+    KissLog.net(GitHub repo)
+    Log4Net(GitHub repo)
+    NLog(GitHub repo)
+    NReco.Logging(GitHub repo)
+    Sentry(GitHub repo)
+    Serilog(GitHub repo)
+    Stackdriver(GitHub repo)
+*/
+
+#endregion
+
+#region mail custom service
+builder.Services.AddScoped<LocalMailService>();
 #endregion
 
 // finaly build application

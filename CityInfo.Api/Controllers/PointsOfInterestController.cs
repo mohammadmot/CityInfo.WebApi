@@ -1,4 +1,5 @@
 ﻿using CityInfo.Api.Models;
+using CityInfo.Api.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,18 @@ namespace CityInfo.Api.Controllers
     [ApiController]
     public class PointsOfInterestController : ControllerBase
     {
+        private readonly ILogger<FilesController> _logger;
+        private readonly LocalMailService _MailService;
+
+        // add dependency in constructor injection
+        public PointsOfInterestController(ILogger<FilesController> logger,
+            LocalMailService mail
+            )
+        {
+            _logger = logger;
+            _MailService = mail ?? throw new ArgumentException(nameof(mail));
+        }
+
         #region Get
         [HttpGet]
         public ActionResult<PointOfInterestDto> GetPointsOfInterest(int cityId)
@@ -250,6 +263,10 @@ namespace CityInfo.Api.Controllers
                 return NotFound();
 
             city.pointOfInterestDtos.Remove(pointOriginal);
+
+            // email
+            _MailService.Send("PointsOfInterestController delete",
+                $"Point of interest with Id: {cityId}");
 
             return NoContent();
         }
